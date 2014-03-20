@@ -16,9 +16,4 @@ include plugin_dir_path(__FILE__).'inc/xmlrpc.php';
 include plugin_dir_path(__FILE__).'inc/post_types.php';
 include plugin_dir_path(__FILE__).'inc/meta.php';
 
-function t3_try($atts) {
-echo "t3 ok</br>";
-}
-
-add_shortcode('t3','t3_try');
 ?>
