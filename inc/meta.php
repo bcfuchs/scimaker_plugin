@@ -24,52 +24,52 @@ function scimaker_add_post_meta_boxes() {
 	'scimaker_resources_post_class_meta_box_url', 	// Callback function to write html
 	'scimaker_resources', 	// Admin page (or post type)
 	'side', 	// Context
-	'core' );	// Priority
-	
+	'core' ); // Priority
+	          
 	// Club Url
 	add_meta_box ( 'scimaker_url-post-class', 	// Unique ID
 	esc_html__ ( 'Club Link', 'scimaker' ), 	// Title
 	'scimaker_club_post_class_meta_box_url', 	// Callback function to write html
 	'scimaker_club', 	// Admin page (or post type)
 	'side', 	// Context
-	'core' );	// Priority
-	
+	'core' ); // Priority
+	          
 	// Event Url
 	add_meta_box ( 'scimaker_url-post-class', 	// Unique ID
 	esc_html__ ( 'Link for your event', 'scimaker' ), 	// Title
 	'scimaker_event_post_class_meta_box_url', 	// Callback function to write html
 	'scimaker_event', 	// Admin page (or post type)
 	'side', 	// Context
-	'core' );	// Priority
-
+	'core' ); // Priority
 }
-
 function scimaker_save_post_class_meta_boxes() {
 	add_action ( 'save_post', 'scimaker_resources_save_post_class_meta', 10, 2 );
 	add_action ( 'save_post', 'scimaker_club_save_post_class_meta', 10, 2 );
 	add_action ( 'save_post', 'scimaker_event_save_post_class_meta', 10, 2 );
 }
 
-/** Resources metadata */
+/**
+ * Resources metadata
+ */
 
 // URI
 function scimaker_resources_post_class_meta_box_url($object, $box) {
 	$desc = "Enter a url for the resources";
-	$id = "scimaker_resources_url_meta"; // ids need to be different when fields are on the same html page. 
+	$id = "scimaker_resources_url_meta"; // ids need to be different when fields are on the same html page.
 	$name = $id;
 	$nonce = $id . "_nonce";
 	scimaker_post_class_meta_box ( $object, $box, $desc, $id, $name, $nonce );
 }
-
 function scimaker_resources_save_post_class_meta($post_id, $post) {
-
 	$id = "scimaker_resources_url_meta";
 	$klass = $id;
 	$nonce = $klass . "_nonce";
-
-	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
+	
+	scimaker_save_post_class_meta ( $post_id, $post, $klass, $nonce );
 }
-/** Club Metadata */
+/**
+ * Club Metadata
+ */
 
 // URI
 function scimaker_club_post_class_meta_box_url($object, $box) {
@@ -79,16 +79,16 @@ function scimaker_club_post_class_meta_box_url($object, $box) {
 	$nonce = $id . "_nonce";
 	scimaker_post_class_meta_box ( $object, $box, $desc, $id, $name, $nonce );
 }
-
 function scimaker_club_save_post_class_meta($post_id, $post) {
-
 	$klass = "scimaker_club_url_meta"; // used for the metadata key
 	$nonce = $klass . "_nonce";
-
-	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
+	
+	scimaker_save_post_class_meta ( $post_id, $post, $klass, $nonce );
 }
 
-/** Event Metadata */
+/**
+ * Event Metadata
+ */
 
 // URI
 function scimaker_event_post_class_meta_box_url($object, $box) {
@@ -98,29 +98,38 @@ function scimaker_event_post_class_meta_box_url($object, $box) {
 	$nonce = $id . "_nonce";
 	scimaker_post_class_meta_box ( $object, $box, $desc, $id, $name, $nonce );
 }
-
 function scimaker_event_save_post_class_meta($post_id, $post) {
-
 	$klass = "scimaker_event_url_meta"; // used for the metadata key
 	$nonce = $klass . "_nonce";
-
-	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
+	
+	scimaker_save_post_class_meta ( $post_id, $post, $klass, $nonce );
 }
 
-
-/* Display the post meta box. */
-function scimaker_post_class_meta_box($object, $box, $desc, $id, $name, $nonce) {
-	?>
-
-	<?php wp_nonce_field( basename( __FILE__ ), $nonce ); ?>
-<p>
+/**
+ * Display the post meta box.
+ * @param Post $object
+ * @param unknown $box
+ * @param string $desc
+ * @param int $id
+ * @param string $name
+ * @param string $nonce
+ * @param callable $fomatter
+ */
+function scimaker_post_class_meta_box($object, $box, $desc, $id, $name, $nonce, $fomatter = null) {
+// define a default formatter
+	$formatter = is_callable ( $formatter ) ? $formatter : function ($object, $box, $desc, $id, $name, $nonce) {
+	 wp_nonce_field( basename( __FILE__ ), $nonce ); 
+?>
+	<p>
 	<label for="<?php echo $name ?>"><?php _e( $desc, 'scimakers' ); ?></label> <br /> <input class="widefat" type="text"
 		name="<?php echo $name ?>" id="<?php echo $id ?>"
 		value="<?php echo esc_attr( get_post_meta( $object->ID, $id, true ) ); ?>" size="30" />
-</p>
+	</p>
 <?php
+	};
+	
+	$formatter( $object, $box, $desc, $id, $name, $nonce );
 }
-
 
 /* Save the meta box's post metadata. */
 function scimaker_save_post_class_meta($post_id, $post, $klass, $nonce) {
@@ -137,8 +146,8 @@ function scimaker_save_post_class_meta($post_id, $post, $klass, $nonce) {
 		return $post_id;
 		
 		/* Get the posted data and sanitize it for use as an HTML class. */
-	//$new_meta_value = (isset ( $_POST [$klass] ) ? sanitize_html_class ( $_POST [$klass] ) : '');
-	$new_meta_value = (isset ( $_POST[$klass] ) ?  $_POST[$klass]  : '');
+		// $new_meta_value = (isset ( $_POST [$klass] ) ? sanitize_html_class ( $_POST [$klass] ) : '');
+	$new_meta_value = (isset ( $_POST [$klass] ) ? $_POST [$klass] : '');
 	/* Get the meta key. */
 	$meta_key = $klass;
 	
