@@ -19,26 +19,35 @@ function scimaker_add_post_meta_boxes() {
 	// http://codex.wordpress.org/Function_Reference/add_meta_box
 	// add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
 	// Resources URL
-	add_meta_box ( 'scimaker_resources-url-post-class', 	// Unique ID
+	add_meta_box ( 'scimaker_url-post-class', 	// Unique ID
 	esc_html__ ( 'Resource URL', 'scimaker' ), 	// Title
 	'scimaker_resources_post_class_meta_box_url', 	// Callback function to write html
 	'scimaker_resources', 	// Admin page (or post type)
 	'side', 	// Context
-	'default' );	// Priority
+	'core' );	// Priority
 	
 	// Club Url
-	add_meta_box ( 'scimaker_club-url-post-class', 	// Unique ID
+	add_meta_box ( 'scimaker_url-post-class', 	// Unique ID
 	esc_html__ ( 'Club Link', 'scimaker' ), 	// Title
 	'scimaker_club_post_class_meta_box_url', 	// Callback function to write html
 	'scimaker_club', 	// Admin page (or post type)
 	'side', 	// Context
-	'default' );	// Priority
+	'core' );	// Priority
+	
+	// Event Url
+	add_meta_box ( 'scimaker_url-post-class', 	// Unique ID
+	esc_html__ ( 'Link for your event', 'scimaker' ), 	// Title
+	'scimaker_event_post_class_meta_box_url', 	// Callback function to write html
+	'scimaker_event', 	// Admin page (or post type)
+	'side', 	// Context
+	'core' );	// Priority
 
 }
 
 function scimaker_save_post_class_meta_boxes() {
 	add_action ( 'save_post', 'scimaker_resources_save_post_class_meta', 10, 2 );
 	add_action ( 'save_post', 'scimaker_club_save_post_class_meta', 10, 2 );
+	add_action ( 'save_post', 'scimaker_event_save_post_class_meta', 10, 2 );
 }
 
 /** Resources metadata */
@@ -60,7 +69,6 @@ function scimaker_resources_save_post_class_meta($post_id, $post) {
 
 	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
 }
-
 /** Club Metadata */
 
 // URI
@@ -75,6 +83,25 @@ function scimaker_club_post_class_meta_box_url($object, $box) {
 function scimaker_club_save_post_class_meta($post_id, $post) {
 
 	$klass = "scimaker_club_url_meta"; // used for the metadata key
+	$nonce = $klass . "_nonce";
+
+	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
+}
+
+/** Event Metadata */
+
+// URI
+function scimaker_event_post_class_meta_box_url($object, $box) {
+	$desc = "Enter a link for your Event";
+	$id = "scimaker_event_url_meta";
+	$name = $id;
+	$nonce = $id . "_nonce";
+	scimaker_post_class_meta_box ( $object, $box, $desc, $id, $name, $nonce );
+}
+
+function scimaker_event_save_post_class_meta($post_id, $post) {
+
+	$klass = "scimaker_event_url_meta"; // used for the metadata key
 	$nonce = $klass . "_nonce";
 
 	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );

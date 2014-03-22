@@ -58,12 +58,12 @@ function create_post_type($pt,$name,$sing) {
 		'singular_name' => __( $sing ),
 		'name_admin_bar'     => _x( $sing, 'add new on admin bar', 'your-plugin-textdomain' )
 	),
-	'taxonomies'=>array('category','post_tag'),
+	'taxonomies'=>array('post_tag'),
 	'public' => true,
 	'menu_position'=>2,
 	'menu_icon'=>'',
 	'has_archive' => true,
-	'supports' => array( 'title', 'editor', 'comments', 'excerpt', 'custom-fields', 'thumbnail','revisions' )
+	'supports' => array( 'title', 'editor', 'comments', 'excerpt',  'thumbnail','revisions' )
 	)
 	);
 }
