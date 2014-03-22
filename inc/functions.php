@@ -14,6 +14,7 @@ add_shortcode ( 'scimaker_list_resources', function($atts){ return scimaker_list
 
 function scimaker_list_shortcode($atts,$title,$cat) {
 //TODO attributes
+//NB we can add a formatter and a filter
 	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
 }
 
@@ -54,19 +55,22 @@ function scimaker_list_resources_widget() {
 /**
  * Add some basic html for display in widget
  * @param string $category_id
+ * @param callable $formatter
  * @param callable $filter
+ * 
  */
-function scimaker_list_category_widget($category_id, $filter) {
+function scimaker_list_category_widget($category_id, $formatter = null, $filter = null) {
 	
+	$filter = is_callable($filter) ? $filter : $filter = function($d) {return $d & 1;};
+		//basic formatting..
+	$formatter =  is_callable($formatter) ? $formatter :function($v) {return '<li><a href="'.$v->guid.'">'.$v->post_title."</a></li>"; };
 	$posts_array = scimaker_list_category($category_id);
+	
 	// StringBuilder, php-style
 	$out = array();
 	array_push($out,"<ul>");
-	foreach ($posts_array as $v) {
-		//	echo $v->post_title . "<br/>";
-		array_push($out, '<li><a href="'.$v->guid.'">'.$v->post_title."</a></li>");
-	
-	}
+	array_filter($posts_array,$filter);
+	foreach ($posts_array as $v) {	array_push($out, $formatter($v));}
 	unset ($v);
 	array_push($out,"</ul>");
 	return join(" ",$out);
