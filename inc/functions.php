@@ -6,44 +6,17 @@
 
 /** shortcodes */
 
+add_shortcode ( 'scimaker_list_projects', function($atts){ return scimaker_list_shortcode($atts,'Projects','scimaker_project'); } );
+add_shortcode ( 'scimaker_list_events', function($atts){ return scimaker_list_shortcode($atts,'Events','scimaker_event'); }  );
+add_shortcode ( 'scimaker_list_clubs', function($atts){ return scimaker_list_shortcode($atts,'Clubs','scimaker_club'); }  );
+add_shortcode ( 'scimaker_list_challenges', function($atts){ return scimaker_list_shortcode($atts,'Challenges','scimaker_challenge'); }  );
+add_shortcode ( 'scimaker_list_resources', function($atts){ return scimaker_list_shortcode($atts,'Resources','scimaker_resources'); }  );
 
-
-
-add_shortcode ( 'scimaker_list_projects', 'scimaker_list_projects_shortcode' );
-add_shortcode ( 'scimaker_list_events', 'scimaker_list_events_shortcode' );
-add_shortcode ( 'scimaker_list_clubs', 'scimaker_list_clubs_shortcode' );
-add_shortcode ( 'scimaker_list_challenges', 'scimaker_list_challenges_shortcode' );
-add_shortcode ( 'scimaker_list_resources', 'scimaker_list_resources_shortcode' );
-
-function scimaker_list_projects_shortcode($atts) {
-	$cat = 'scimaker_project';
-	$title = 'Projects';
-	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
-} 
-
-function scimaker_list_events_shortcode($atts) {
-	$cat = 'scimaker_event';
-	$title = 'Events';
-	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
-	
-}
-function scimaker_list_clubs_shortcode($atts) {
-	$cat = 'scimaker_club';
-	$title = 'Clubs';
-	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
-	
-}
-
-function scimaker_list_challenges_shortcode($atts) {
-	$cat = 'scimaker_challenge';
-	$title = 'Challenges';
+function scimaker_list_shortcode($atts,$title,$cat) {
+//TODO attributes
 	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
 }
-function scimaker_list_resources_shortcode($atts) {
-	$cat = 'scimaker_resources';
-	$title = 'Resources';
-	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
-}
+
 
 function format_shortcode_list($d,$title,$cat_class) {
 	
