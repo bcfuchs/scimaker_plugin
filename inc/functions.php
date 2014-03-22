@@ -1,36 +1,62 @@
 <?php
 
+/**
+ * shortcodes and general functions
+ */
+
 /** shortcodes */
 
 
 
-/**
- * scimaker_list_projects
- * @param unknown $atts
- */
-function scimaker_list_projects($atts) {
-	try {
-		
-		echo "list scimaker projects<br/>";
-		$posts_array = scimaker_list_category(3);
-		
-		echo "hi! there are " . count ( $posts_array ) . " projects<br/>";
-		foreach ($posts_array as $v) {
-			echo $v->post_title . "<br/>";
-			echo '<a href="'.$v->guid.'">'.$v->post_title."</a><br/>";
-		}
-		unset ($v);
-		echo "<hr/>";
-		$post_1 =  $posts_array[0];
-		echo $post_1->post_title . "</br>";
-		echo '<a href="'.$post_1->guid.'">'.$post_1->post_title."</a><br/>";
-		echo "<pre>".print_r($posts_array[0])."</pre>";
-	} catch ( Exception $e ) {
-	}
+
+add_shortcode ( 'scimaker_list_projects', 'scimaker_list_projects_shortcode' );
+add_shortcode ( 'scimaker_list_events', 'scimaker_list_events_shortcode' );
+add_shortcode ( 'scimaker_list_clubs', 'scimaker_list_clubs_shortcode' );
+add_shortcode ( 'scimaker_list_challenges', 'scimaker_list_challenges_shortcode' );
+add_shortcode ( 'scimaker_list_resources', 'scimaker_list_resources_shortcode' );
+
+function scimaker_list_projects_shortcode($atts) {
+	$cat = 'scimaker_project';
+	$title = 'Projects';
+	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
+} 
+
+function scimaker_list_events_shortcode($atts) {
+	$cat = 'scimaker_event';
+	$title = 'Events';
+	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
+	
 }
-add_shortcode ( 'scimaker_projects', 'scimaker_list_projects' );
+function scimaker_list_clubs_shortcode($atts) {
+	$cat = 'scimaker_club';
+	$title = 'Clubs';
+	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
+	
+}
 
+function scimaker_list_challenges_shortcode($atts) {
+	$cat = 'scimaker_challenge';
+	$title = 'Challenges';
+	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
+}
+function scimaker_list_resources_shortcode($atts) {
+	$cat = 'scimaker_resources';
+	$title = 'Resources';
+	return format_shortcode_list(scimaker_list_category_widget($cat),$title,$cat);
+}
 
+function format_shortcode_list($d,$title,$cat_class) {
+	
+	$out = array();
+	array_push($out,'<div class="scimaker_list_container '.$cat_class.'">');
+	array_push($out,'<div class="scimaker_title">'.$title.'</div>');
+	array_push($out,$d);
+	array_push($out,'</div>');
+	return  join(" ",$out);
+	
+}
+
+/* widget data + formatting */
 // strings for readability for now...
 function scimaker_list_projects_widget() {
 	$cat = 'scimaker_project'; // projects
@@ -54,8 +80,8 @@ function scimaker_list_resources_widget() {
 
 /**
  * Add some basic html for display in widget
- * @param unknown $category_id
- * @param unknown $filter
+ * @param string $category_id
+ * @param callable $filter
  */
 function scimaker_list_category_widget($category_id, $filter) {
 	
@@ -72,7 +98,11 @@ function scimaker_list_category_widget($category_id, $filter) {
 	array_push($out,"</ul>");
 	return join(" ",$out);
 }
-
+/**
+ * 
+ * @param string $category_id
+ * @return string
+ */
 function scimaker_list_category($category_id) {
 	// http://codex.wordpress.org/Template_Tags/get_posts
 	// Note: The category parameter needs to be the ID of the category, and not the category name.

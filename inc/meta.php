@@ -18,6 +18,7 @@ function scimaker_add_post_meta_boxes() {
 	
 	// http://codex.wordpress.org/Function_Reference/add_meta_box
 	// add_meta_box( $id, $title, $callback, $post_type, $context, $priority, $callback_args );
+	// Resources URL
 	add_meta_box ( 'scimaker_resources-url-post-class', 	// Unique ID
 	esc_html__ ( 'Resource URL', 'scimaker' ), 	// Title
 	'scimaker_resources_post_class_meta_box_url', 	// Callback function to write html
@@ -25,6 +26,7 @@ function scimaker_add_post_meta_boxes() {
 	'side', 	// Context
 	'default' );	// Priority
 	
+	// Club Url
 	add_meta_box ( 'scimaker_club-url-post-class', 	// Unique ID
 	esc_html__ ( 'Club Link', 'scimaker' ), 	// Title
 	'scimaker_club_post_class_meta_box_url', 	// Callback function to write html
@@ -33,6 +35,7 @@ function scimaker_add_post_meta_boxes() {
 	'default' );	// Priority
 
 }
+
 function scimaker_save_post_class_meta_boxes() {
 	add_action ( 'save_post', 'scimaker_resources_save_post_class_meta', 10, 2 );
 	add_action ( 'save_post', 'scimaker_club_save_post_class_meta', 10, 2 );
@@ -43,7 +46,7 @@ function scimaker_save_post_class_meta_boxes() {
 // URI
 function scimaker_resources_post_class_meta_box_url($object, $box) {
 	$desc = "Enter a url for the resources";
-	$id = "scimaker_resources_url_meta";
+	$id = "scimaker_resources_url_meta"; // ids need to be different when fields are on the same html page. 
 	$name = $id;
 	$nonce = $id . "_nonce";
 	scimaker_post_class_meta_box ( $object, $box, $desc, $id, $name, $nonce );
@@ -51,7 +54,8 @@ function scimaker_resources_post_class_meta_box_url($object, $box) {
 
 function scimaker_resources_save_post_class_meta($post_id, $post) {
 
-	$klass = "scimaker_resources_url_meta";
+	$id = "scimaker_resources_url_meta";
+	$klass = $id;
 	$nonce = $klass . "_nonce";
 
 	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
@@ -70,7 +74,7 @@ function scimaker_club_post_class_meta_box_url($object, $box) {
 
 function scimaker_club_save_post_class_meta($post_id, $post) {
 
-	$klass = "scimaker_club_url_meta";
+	$klass = "scimaker_club_url_meta"; // used for the metadata key
 	$nonce = $klass . "_nonce";
 
 	scimaker_save_post_class_meta( $post_id, $post, $klass, $nonce );
