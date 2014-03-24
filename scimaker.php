@@ -15,5 +15,6 @@ include plugin_dir_path(__FILE__).'inc/widgets.php';
 include plugin_dir_path(__FILE__).'inc/xmlrpc.php';
 include plugin_dir_path(__FILE__).'inc/post_types.php';
 include plugin_dir_path(__FILE__).'inc/meta.php';
+include plugin_dir_path(__FILE__).'inc/admin_menu.php';
 
 ?>

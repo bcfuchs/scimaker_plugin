@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * Scimaker
  * shortcodes and general functions
  */
 
@@ -11,6 +12,12 @@ add_shortcode ( 'scimaker_list_events', function($atts){ return scimaker_list_sh
 add_shortcode ( 'scimaker_list_clubs', function($atts){ return scimaker_list_shortcode($atts,'Clubs','scimaker_club'); }  );
 add_shortcode ( 'scimaker_list_challenges', function($atts){ return scimaker_list_shortcode($atts,'Challenges','scimaker_challenge'); }  );
 add_shortcode ( 'scimaker_list_resources', function($atts){ return scimaker_list_shortcode($atts,'Resources','scimaker_resources'); }  );
+
+/** javascript for shortcodes*/
+wp_enqueue_script( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array(), '1.9.2', true );
+wp_enqueue_script( 'scimaker-plugin', plugins_url( '../js/scimaker.js', __FILE__ ), array(), '1.0.0', true );
+
+//http://code.jquery.com/ui/1.9.2/jquery-ui.min.js
 
 function scimaker_list_shortcode($atts,$title,$cat) {
 //TODO attributes
@@ -64,15 +71,23 @@ function scimaker_list_category_widget($category_id, $formatter = null, $filter 
 	$filter = is_callable($filter) ? $filter : $filter = function($d) {return $d & 1;};
 		//basic formatting..
 	$formatter =  is_callable($formatter) ? $formatter :function($v) {return '<li><a href="'.$v->guid.'">'.$v->post_title."</a></li>"; };
-	$posts_array = scimaker_list_category($category_id);
+	// wrap formatter to get a list of titles
+	// Actually this can be done with javascript!
+	// $titles = array();
+	// $formatter = function($v) use(&$titles,$formatter) { array_push($titles,$v->post_title);return $formatter($v);};
+//	
+		$posts_array = scimaker_list_category($category_id);
 	
 	// StringBuilder, php-style
 	$out = array();
+	
 	array_push($out,"<ul>");
 	array_filter($posts_array,$filter);
 	foreach ($posts_array as $v) {	array_push($out, $formatter($v));}
 	unset ($v);
 	array_push($out,"</ul>");
+	
+	// array_push($out,"<script>var scimaker_titles= ['".join("','",$titles)."'];</script>");
 	return join(" ",$out);
 }
 /**
