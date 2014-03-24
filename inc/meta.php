@@ -47,9 +47,9 @@ function scimaker_add_post_meta_boxes() {
 }
 
 function scimaker_save_post_class_meta_boxes() {
-
+	
+	// closure to add save callback
 	$st  = function($type) {
-
 		return function($post_id,$post) use ($type){
 			scimaker_save_post_class_meta( $post_id, $post,"scimaker_".$type."_meta",
 			"scimaker_".$type."_meta_nonce" );};
@@ -79,7 +79,7 @@ function scimaker_post_class_meta_box($object, $box, $desc, $id, $name, $nonce, 
 	$formatter = is_callable ( $formatter ) ? $formatter : function ($object, $box, $desc, $id, $name, $nonce) {
 		wp_nonce_field ( basename ( __FILE__ ), $nonce );
 		?>
-<p>
+<p class="scimaker_meta_box">
 	<label for="<?php echo $name ?>"><?php _e( $desc, 'scimakers' ); ?></label> <br /> <input class="widefat" type="text"
 		name="<?php echo $name ?>" id="<?php echo $id ?>"
 		value="<?php echo esc_attr( get_post_meta( $object->ID, $id, true ) ); ?>" size="30" />
@@ -89,7 +89,15 @@ function scimaker_post_class_meta_box($object, $box, $desc, $id, $name, $nonce, 
 	$formatter ( $object, $box, $desc, $id, $name, $nonce );
 }
 
-/* Save the meta box's post metadata. */
+
+/**
+ *  Save the meta box's post metadata
+ * @param string $post_id
+ * @param Post $post
+ * @param string $klass
+ * @param string $nonce
+ *
+ */
 function scimaker_save_post_class_meta($post_id, $post, $klass, $nonce) {
 	/* Verify the nonce before proceeding. */
 	if (! isset ( $_POST [$nonce] ) || ! wp_verify_nonce ( $_POST [$nonce], basename ( __FILE__ ) ))
