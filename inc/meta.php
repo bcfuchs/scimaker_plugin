@@ -9,16 +9,29 @@ add_action ( 'load-post-new.php', 'scimaker_post_meta_boxes_setup' );
 // NOTE: because hook weirdness, display and save functions have to be added in
 // different places.
 function scimaker_post_meta_boxes_setup() {
-	/* Add meta boxes on the 'add_meta_boxes' hook. */
-	add_action ( 'add_meta_boxes', 'scimaker_add_post_meta_boxes' );
-	/* Save post meta on the 'save_post' hook. */
-	scimaker_save_post_class_meta_boxes ();
+	
+	$types = array (
+			'resources_url',
+			'club_url',
+			'event_url',
+			'club_geo',
+			'event_geo' 
+	);
+	
+	$s = function (array $types) {
+		/* Add meta boxes on the 'add_meta_boxes' hook. */
+		add_action ( 'add_meta_boxes', 'scimaker_add_post_meta_boxes' );
+		/* Save post meta on the 'save_post' hook. */
+		scimaker_save_post_class_meta_boxes ( $types );
+	};
+	
+	$s ( $types );
 }
 
 // callback to add all the boxes
 function scimaker_add_post_meta_boxes() {
 	// getting rid of unnecessary functions...
-	// closurre to add html
+	// closure to add html
 	$boxf = function ($desc, $type) {
 		return function ($object, $box) use($desc, $type) {
 			// $desc = "Enter a url for the resources";
@@ -30,10 +43,10 @@ function scimaker_add_post_meta_boxes() {
 	};
 	// closure to add the box
 	$metaf = function ($title, $desc, $metatype, $post_type) use($boxf) {
-		add_meta_box ( 'scimaker_url-post-class-'.$metatype, 		// Unique ID
+		add_meta_box ( 'scimaker_url-post-class-' . $metatype, 		// Unique ID
 		esc_html__ ( $title, 'scimaker' ), 		// Title
 		$boxf ( $desc, $metatype ), 		// Callback function to write html
-		                          // 'scimaker_resources_post_class_meta_box_url',
+		                            // 'scimaker_resources_post_class_meta_box_url',
 		$post_type, 		// Admin page (or post type)
 		'side', 		// Context
 		'core' ); // Priority
@@ -43,29 +56,23 @@ function scimaker_add_post_meta_boxes() {
 	$metaf ( 'Club Location', "Enter a location for the club", 'club_geo', 'scimaker_club' );
 	$metaf ( 'Event Location', "Enter a location for the event", 'event_geo', 'scimaker_event' );
 	$metaf ( 'Event Link', "Enter a link for the event", 'event_url', 'scimaker_event' );
-
 }
-
-function scimaker_save_post_class_meta_boxes() {
+function scimaker_save_post_class_meta_boxes($types) {
 	
 	// closure to add save callback
-	$st  = function($type) {
-		return function($post_id,$post) use ($type){
-			scimaker_save_post_class_meta( $post_id, $post,"scimaker_".$type."_meta",
-			"scimaker_".$type."_meta_nonce" );};
+	$st = function ($type) {
+		return function ($post_id, $post) use($type) {
+			scimaker_save_post_class_meta ( $post_id, $post, "scimaker_" . $type . "_meta", "scimaker_" . $type . "_meta_nonce" );
+		};
 	};
-	add_action('save_post',$st('resources_url'),10,2);
-	add_action('save_post',$st('club_url'),10,2);
-	add_action('save_post',$st('event_url'),10,2);
-	add_action('save_post',$st('club_geo'),10,2);
-	add_action('save_post',$st('event_geo'),10,2);
+	foreach ( $types as $val ) {
+		add_action ( 'save_post', $st ( $val ), 10, 2 );
+	}	
 }
-
-
 
 /**
  * Display the post meta box.
- * 
+ *
  * @param Post $object        	
  * @param unknown $box        	
  * @param string $desc        	
@@ -89,13 +96,13 @@ function scimaker_post_class_meta_box($object, $box, $desc, $id, $name, $nonce, 
 	$formatter ( $object, $box, $desc, $id, $name, $nonce );
 }
 
-
 /**
- *  Save the meta box's post metadata
- * @param string $post_id
- * @param Post $post
- * @param string $klass
- * @param string $nonce
+ * Save the meta box's post metadata
+ * 
+ * @param string $post_id        	
+ * @param Post $post        	
+ * @param string $klass        	
+ * @param string $nonce        	
  *
  */
 function scimaker_save_post_class_meta($post_id, $post, $klass, $nonce) {

@@ -1,28 +1,14 @@
 <?php 
 
 
-// register widget
-//c+p  from doc ... could be more economical...
+// register widgets
 
-function register_joinproject_widget() {
-	register_widget( 'Scimakers_JoinProject_Widget' );
-}
-add_action( 'widgets_init', 'register_joinproject_widget' );
 
-function register_joinchallenge_widget() {
-	register_widget( 'Scimakers_JoinChallenge_Widget' );
-}
-add_action( 'widgets_init', 'register_joinchallenge_widget' );
+add_action( 'widgets_init', function(){register_widget( 'Scimakers_JoinProject_Widget' );});
+add_action( 'widgets_init', function(){register_widget('Scimakers_JoinChallenge_Widget');});
+add_action( 'widgets_init', function(){register_widget('Scimakers_FindResource_Widget');});
+add_action( 'widgets_init', function(){register_widget('Scimakers_FindEvent_Widget');});
 
-function register_findresource_widget() {
-	register_widget( 'Scimakers_FindResource_Widget' );
-}
-add_action( 'widgets_init', 'register_findresource_widget' );
-
-function register_findevent_widget() {
-	register_widget( 'Scimakers_FindEvent_Widget' );
-}
-add_action( 'widgets_init', 'register_findevent_widget' );
 
 class Scimakers_JoinProject_Widget extends WP_Widget {
 	
@@ -47,13 +33,14 @@ class Scimakers_JoinProject_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
+		
 		$title = apply_filters( 'widget_title', $instance['title'] );
-	
+		 $cat = 'scimaker_project';
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
-		// Get a list of projects via scimakers_list_projects_widget
-		echo __( scimaker_list_projects_widget(), 'text_domain' );
+		// Get a list of projects via scimakers_list_projects_widget in functions.php
+		echo __( scimaker_list_category_widget($cat), 'text_domain' );
 		echo $args['after_widget'];
 	}
 	
@@ -122,12 +109,12 @@ class Scimakers_JoinChallenge_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		$title = apply_filters( 'widget_title', $instance['title'] );
-
+		$cat = 'scimaker_challenge'; // the post-type
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
 		// Get a list of projects via scimakers_list_projects_widget
-		echo __( scimaker_list_challenges_widget(), 'text_domain' );
+		echo __( scimaker_list_category_widget($cat), 'text_domain' );
 		echo $args['after_widget'];
 	}
 
@@ -196,12 +183,12 @@ class Scimakers_FindResource_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		$title = apply_filters( 'widget_title', $instance['title'] );
-
+		$cat = 'scimaker_resources'; // 'resource';
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
 		// Get a list of resources 
-		echo __( scimaker_list_resources_widget(), 'text_domain' );
+		echo __( scimaker_list_category_widget($cat), 'text_domain' );
 		echo $args['after_widget'];
 	}
 
@@ -269,12 +256,12 @@ class Scimakers_FindEvent_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		$title = apply_filters( 'widget_title', $instance['title'] );
-
+	$cat = 'scimaker_event';
 		echo $args['before_widget'];
 		if ( ! empty( $title ) )
 			echo $args['before_title'] . $title . $args['after_title'];
 		// Get a list of events
-		echo __( scimaker_list_events_widget(), 'text_domain' );
+		echo __( scimaker_list_category_widget($cat), 'text_domain' );
 		echo $args['after_widget'];
 	}
 
