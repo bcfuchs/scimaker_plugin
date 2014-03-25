@@ -13,6 +13,7 @@ function my_custom_menu_page(){
 	height: 130px;
 	}
 	</style>
+	<h1>ScienceMakers Plugin</h1>
 <div class="scimaker_shortcodes">
 <h2>Shortcodes</h2>
 <p>Note:  colours can be changed in the theme customisation settings in the scimakers theme section of the admin page.
