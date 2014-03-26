@@ -9,16 +9,16 @@ add_post_types_scimaker();
 function add_post_types_scimaker() {
 	$post_types = array('post');
 	$apt = function($a,$b,$c,$pos) use (&$post_types) {
-		add_action( 'init',  function(){create_post_type($a,$b,$c,$pos);} );
 		array_push($post_types,$a);
+		add_action( 'init',  function() use($a,$b,$c,$pos) {create_post_type($a,$b,$c,$pos);} );
+		
 	};
 	
 	$apt('scimaker_resources','Resources','Resource',26);
 	$apt('scimaker_event','Events','Event',27);
 	$apt('scimaker_challenge','Challenges','Challenge',28);
 	$apt('scimaker_club','Clubs','Club',29);
-	$apt('scimaker_forum','Forums','Forum',30);
-	
+	$apt('scimaker_forum','Groups','Group',30);
 	add_action( 'pre_get_posts', add_scimaker_post_types_to_query($post_types));
 }
 
@@ -47,7 +47,7 @@ function create_post_type($pt,$name,$sing,$menu_position) {
 	'menu_position'=>$menu_position,
 	'menu_icon'=>'',
 	'has_archive' => true,
-	'supports' => array( 'title', 'editor', 'comments', 'excerpt',  'thumbnail','revisions' )
+	'supports' => array( 'title', 'editor','author', 'comments', 'excerpt',  'thumbnail','revisions' )
 	)
 	);
 }
