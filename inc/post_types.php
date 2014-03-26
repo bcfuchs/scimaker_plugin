@@ -2,54 +2,36 @@
 /** create custom post-type */
 
 //http://codex.wordpress.org/Post_Types
-// metadata for each post type in meta.php
+// metadata for each post type is added in meta.php
+
+add_post_types_scimaker();
 
 function add_post_types_scimaker() {
+	$post_types = array('post');
+	$apt = function($a,$b,$c,$pos) use (&$post_types) {
+		add_action( 'init',  function(){create_post_type($a,$b,$c,$pos);} );
+		array_push($post_types,$a);
+	};
 	
-	add_action( 'init', 'create_post_type_project' );
-	add_action( 'init', 'create_post_type_resources' );
-	add_action( 'init', 'create_post_type_event' );
-	add_action( 'init', 'create_post_type_challenge' );
-	add_action( 'init', 'create_post_type_club' );
-	add_action( 'init', function(){create_post_type('scimaker_forum','Forums','Forum');});
-	add_action( 'pre_get_posts', 'add_scimaker_post_types_to_query' );
+	$apt('scimaker_resources','Resources','Resource',26);
+	$apt('scimaker_event','Events','Event',27);
+	$apt('scimaker_challenge','Challenges','Challenge',28);
+	$apt('scimaker_club','Clubs','Club',29);
+	$apt('scimaker_forum','Forums','Forum',30);
+	
+	add_action( 'pre_get_posts', add_scimaker_post_types_to_query($post_types));
 }
-// Show posts of 'post', 'page' and 'movie' post types on home page
 
-// TODO -- very risky for a plugin--overrides other post-types in query  set by other themes...
-function add_scimaker_post_types_to_query( $query ) {
+function add_scimaker_post_types_to_query( $ar ) {
+	
+	return function($query) use ($ar) {
 	if ( is_home() && $query->is_main_query() )
-		$query->set( 'post_type', array( 'post',
-				'scimaker_project', 
-				'scimaker_resources',
-				'scimaker_event',
-				'scimaker_club',
-				'scimaker_forum',
-				'scimaker_challenge') );
-	return $query;
+		
+		$query->set( 'post_type', $ar );
+		return $query;
+	};
 }
 
-
-function create_post_type_project() {
-	create_post_type('scimaker_project','Projects','Project',26);
-}
-function create_post_type_resources() {
-	create_post_type('scimaker_resources','Resources','Resource',27);
-}
-
-function create_post_type_event() {
-	create_post_type('scimaker_event','Events','Event',28);
-}
-
-function create_post_type_club() {
-	create_post_type('scimaker_club','Clubs','club',29);
-}
-function create_post_type_test() {
-	create_post_type('scimaker_test','Tests','Test',30);
-}
-function create_post_type_challenge() {
-	create_post_type('scimaker_challenge','Challenges','Challenge',25);
-}
 
 function create_post_type($pt,$name,$sing,$menu_position) {
 	//http://codex.wordpress.org/Function_Reference/register_post_type
@@ -58,7 +40,7 @@ function create_post_type($pt,$name,$sing,$menu_position) {
 	'labels' => array(
 		'name' => __( $name ),
 		'singular_name' => __( $sing ),
-		'name_admin_bar'     => _x( $sing, 'add new on admin bar', 'your-plugin-textdomain' )
+		'name_admin_bar'     => _x( $sing, 'add new on admin bar', 'scimaker-textdomain' )
 	),
 	'taxonomies'=>array('post_tag'),
 	'public' => true,
@@ -69,7 +51,7 @@ function create_post_type($pt,$name,$sing,$menu_position) {
 	)
 	);
 }
-add_post_types_scimaker();
+
 
 
 ?>
