@@ -8,18 +8,62 @@
  * @param unknown $cat
  * @return string
  */
+
+// actually we can do this with ajax now...
+// http://codex.wordpress.org/AJAX_in_Plugins
+
 function scimakers_addResourceToProject($args) {
-	$id = 1;
-	$project_id = $args[0];
-	$resource_id = $args[1];
-	$out = array();
-	// for the moment, do this w/o ref. to user.
-	$res = add_metadata ( 'post', $project_id, 'hasResource', $resource_id, false );
-	$out['msg'] = "added " . $resource_id . " to " . $project_id;
-	$out['args'] = $args;
-	$out['res'] = $res;
-	return $out;
 	
+	$status = 'fail';
+	$id = 1;
+	$project_id = $args [0];
+	$resource_id = $args [1];
+	$post_type = 'scimaker_project';
+	
+	$out = array ();
+	$checkPT = function($id,$type) {
+		$post = get_post($id);
+		return	$post->post_type == $type ?  true :  false;
+		
+	};
+	// is project post-type scimaker_project?
+
+	if (! $checkPT($project_id,'scimaker_project')) {
+		$status = false;
+		$out['msg'] = '"'. $post->post_title . "\" is not a project!";
+		$out['args'] = $args;
+		return scimakers_package_rpc ( $out, $status );
+	}
+	
+	
+	if (! $checkPT($resource_id,'scimaker_resources')) { 
+		$status = false;
+		$out['msg'] = '"'. $post->post_title . "\" is not a resource!";
+		$out['args'] = $args;
+		return scimakers_package_rpc ( $out, $status );
+	}
+	$meta = get_post_meta ( $project_id, 'hasResource', false );
+	
+	
+	
+	// is this resource already assigned?
+	if (in_array ( $resource_id, $meta )) {
+		$status = true;
+		$out ['msg'] = "resource already belongs to that project--we should never have come this far";
+		return scimakers_package_rpc ( $out, $status );
+	} 
+	
+		$status = true;
+		
+		// for the moment, do this w/o ref. to user.
+		$res = add_metadata ( 'post', $project_id, 'hasResource', $resource_id, false );
+		
+		$out ['msg'] = "added " . $resource_id . " to " . $project_id;
+		$out ['args'] = $args;
+		$out ['res'] = get_post_meta ( $project_id, 'hasResource', false );
+		// delete_post_meta( $project_id,'hasResource',$resource_id);
+	
+		return scimakers_package_rpc ( $out, $status );
 }
 function scimakers_getPostsByCategory($cat) {
 	try {
@@ -46,11 +90,13 @@ function scimakers_getEvents($args) {
 	$cat = "scimaker_event"; // 'event';
 	return scimakers_getPostsByCategory ( $cat );
 }
-function scimakers_package_rpc($msg) {
+function scimakers_package_rpc($msg,$status = true) {
+	
 	$out = array ();
 	$info = array ();
 	$out ['data'] = $msg;
 	$info ['timestamp'] = time ();
+	$info['status'] = $status;	
 	$out ['info'] = $info;
 	return $out;
 }
@@ -73,7 +119,7 @@ function mynamespace_new_xmlrpc_methods($methods) {
 	$gt = function ($a) use(&$methods) {
 		$methods ['scimakers.' . $a] = 'scimakers_' . $a;
 	};
-	$gt ( 'addResourceToProject');
+	$gt ( 'addResourceToProject' );
 	$gt ( 'getProjects' );
 	$gt ( 'getEvents' );
 	$gt ( 'getChallenges' );
