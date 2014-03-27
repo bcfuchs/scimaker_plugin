@@ -13,11 +13,13 @@ jQuery(document).ready(function($) {
 	var respf = function(response) {
 // here we'd update the display
 		console.log('Got this from the server: ' + response);
+		$('#tester1').html(response);
 	}
 // here we'd set a click
-	
+	$('#welcome-panel').append('<div id="tester1" style="cursor:pointer;">add to project test</div>');
+	$('#tester1').click(function() {
 	addResourceToProject(105,91,respf);
-	
+	});
    function addResourceToProject(pid,rid,handler) {
 	var data = {
 		action: 'scimaker_addResourceToProject',

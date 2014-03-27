@@ -50,6 +50,7 @@ function scimakers_addResourceToProject($args) {
 	if (in_array ( $resource_id, $meta )) {
 		$status = true;
 		$out ['msg'] = "resource already belongs to that project--we should never have come this far";
+		delete_post_meta( $project_id,'hasResource',$resource_id);
 		return scimakers_package_rpc ( $out, $status );
 	} 
 	
@@ -61,7 +62,7 @@ function scimakers_addResourceToProject($args) {
 		$out ['msg'] = "added " . $resource_id . " to " . $project_id;
 		$out ['args'] = $args;
 		$out ['res'] = get_post_meta ( $project_id, 'hasResource', false );
-		// delete_post_meta( $project_id,'hasResource',$resource_id);
+		
 	
 		return scimakers_package_rpc ( $out, $status );
 }
