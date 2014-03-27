@@ -8,10 +8,18 @@
  * @param unknown $cat
  * @return string
  */
-function scimakers_collectResource($project_id, $resource_id) {
+function scimakers_addResourceToProject($args) {
 	$id = 1;
+	$project_id = $args[0];
+	$resource_id = $args[1];
+	$out = array();
 	// for the moment, do this w/o ref. to user.
-	add_metadata ( 'post', $project_id, 'hasResource', $resource_id, false );
+	$res = add_metadata ( 'post', $project_id, 'hasResource', $resource_id, false );
+	$out['msg'] = "added " . $resource_id . " to " . $project_id;
+	$out['args'] = $args;
+	$out['res'] = $res;
+	return $out;
+	
 }
 function scimakers_getPostsByCategory($cat) {
 	try {
@@ -39,11 +47,11 @@ function scimakers_getEvents($args) {
 	return scimakers_getPostsByCategory ( $cat );
 }
 function scimakers_package_rpc($msg) {
-	$out = array();
-	$info = array();
-	$out['data'] = $msg;
-	$info['timestamp'] = time();
-	$out['info'] = $info;
+	$out = array ();
+	$info = array ();
+	$out ['data'] = $msg;
+	$info ['timestamp'] = time ();
+	$out ['info'] = $info;
 	return $out;
 }
 function scimakers_package_post_info($plist, $formatter) {
@@ -55,20 +63,22 @@ function scimakers_package_post_info($plist, $formatter) {
 			$out ['guid'] = $v->guid;
 			$out ['id'] = $v->ID; // this is what will be used
 			$out ['post'] = $v;
-			$bigout[$v->ID] = $out;
+			$bigout [$v->ID] = $out;
 		}
 		return $bigout;
 	};
-	return scimakers_package_rpc($formatter ( $plist ));
+	return scimakers_package_rpc ( $formatter ( $plist ) );
 }
 function mynamespace_new_xmlrpc_methods($methods) {
-	$gt = function ($a) {
-		return 'scimakers_get' . $a;
+	$gt = function ($a) use(&$methods) {
+		$methods ['scimakers.' . $a] = 'scimakers_' . $a;
 	};
-	$methods ['scimakers.getProjects'] = $gt ( 'Projects' );
-	$methods ['scimakers.getEvents'] = $gt ( 'Events' );
-	$methods ['scimakers.getChallenges'] = $gt ( 'Challenges' );
-	$methods ['scimakers.getResources'] = $gt ( 'Resources' );
+	$gt ( 'addResourceToProject');
+	$gt ( 'getProjects' );
+	$gt ( 'getEvents' );
+	$gt ( 'getChallenges' );
+	$gt ( 'getResources' );
+	
 	return $methods;
 }
 
