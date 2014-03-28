@@ -44,8 +44,6 @@ function scimakers_addResourceToProject($args) {
 	}
 	$meta = get_post_meta ( $project_id, 'hasResource', false );
 	
-	
-	
 	// is this resource already assigned?
 	if (in_array ( $resource_id, $meta )) {
 		$status = true;
