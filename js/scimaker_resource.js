@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
 		$('#tester1').html("Added this resource!");
 	}
 // here we'd set a click
-	$('#welcome-panel').append('<div id="tester1" style="width: 14%;background-color:gray;color:white;border:  dotted blue;cursor:pointer;">add to project test</div>');
+	$('#wp-toolbar ul#wp-admin-bar-top-secondary').append('<li id="tester1" style="width: 64%;background-color:gray;color:white;border:  dotted blue;cursor:pointer;">add to project test</li>');
 	
 	$('#tester1').click(function() {
 		$('#tester1').css({'background-color':"blue"});
