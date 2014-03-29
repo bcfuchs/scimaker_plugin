@@ -13,7 +13,7 @@ function add_post_types_scimaker() {
 		add_action( 'init',  function() use($a,$b,$c,$pos) {create_post_type($a,$b,$c,$pos);} );
 		
 	};
-	
+	$apt('scimaker_project','Projects','Project',25);
 	$apt('scimaker_resources','Resources','Resource',26);
 	$apt('scimaker_event','Events','Event',27);
 	$apt('scimaker_challenge','Challenges','Challenge',28);

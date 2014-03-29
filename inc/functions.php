@@ -24,58 +24,65 @@ add_shortcode ( 'scimaker_list_resources', function ($atts) {
 	return scimaker_list_shortcode ( $atts, 'Resources', 'scimaker_resources' );
 } );
 add_shortcode ( 'scimaker_list_resources_for_project', function ($atts) {
-	extract( shortcode_atts( array(
-	'project_id' => null,
-
+	extract ( shortcode_atts ( array (
+			'project_id' => null,
+			'raw' => false 
 	), $atts ) );
 	
-		return scimaker_list_resources_for_project($project_id);
-	} );
+	return scimaker_list_resources_for_project ( $project_id, $raw );
+} );
 
 /**
  * javascript for shortcodes
  */
 wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
 wp_enqueue_script ( 'scimaker-plugin', plugins_url ( '../js/scimaker.js', __FILE__ ), array (), '1.0.0', true );
-
-
-function scimaker_list_resources_for_project($id = null) {
+// Actually this could be jsut a filter + new formatter on 
+function scimaker_list_resources_for_project($id = null, $raw = false) {
 	$title = "Project Resources";
 	$cat_class = "scimaker_resources";
-	
-	$checkPT = function($id,$type) {
-		$post = get_post($id);
-		return	$post->post_type == $type ?  true :  false;
-	
+	$prop = array();
+	$prop['notproject'] =  "<b>Not a Project!</b>"; 
+	$checkPT = function ($id, $type) {
+		$post = get_post ( $id );
+		return $post->post_type == $type ? true : false;
 	};
-	$id ?: get_the_ID();
+
 	// if on a project page && id not supplied, then use post id
-	if (!$checkPT($id,'scimaker_project')) {
-		return  format_shortcode_list("<b>Not a Project!</b>", $title, $cat_class);
-	}
 	
+	$id = $id ?: get_the_ID();
+	
+	if (! $checkPT ( $id, 'scimaker_project' )) {
+		return format_shortcode_list ($prop['notproject'], $title, $cat_class );
+	}
+	// list of resource ids assoc. with project $id
 	$meta = get_post_meta ( $id, 'hasResource', false );
 	
-	$out = array();
+	$out = array (); // the output
+	// list item formatter
 	$f = function ($v) {
-			return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
-		};
-	array_push ( $out, "<ul>" );
-	if (!empty($meta)) {
-		
-		foreach($meta as $v) {
-			// get the post title + guid
-			$p = get_post($v);
-			array_push($out,$f($p));
+		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+	};
+	// list formatter
+	$f_big = function ($meta, $f) use(&$out) {
+		array_push ( $out, "<ul>" );
+		if (! empty ( $meta )) {
+			
+			foreach ( $meta as $v ) {
+				// get the post title + guid
+				$p = get_post ( $v );
+				array_push ( $out, $f ( $p ) );
+			}
+			unset ( $v );
 		}
-		unset($v);
+		array_push ( $out, "</ul>" );
+	};
+	if ($raw == true) {
 		
-		
+	} else {
+		$f_big ( $meta, $f );
+		return format_shortcode_list ( join(" ",$out), $title, $cat_class );
 	}
-	array_push ( $out, "</ul>" );
-	
-	return  format_shortcode_list(join(" ",$out), $title, $cat_class);
-	
 }
 
 // http://code.jquery.com/ui/1.9.2/jquery-ui.min.js
@@ -187,6 +194,5 @@ function scimaker_list_category($category_id) {
 	
 	return $posts_array;
 }
-
 
 ?>

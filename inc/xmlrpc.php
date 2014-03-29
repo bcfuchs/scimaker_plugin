@@ -15,7 +15,6 @@
 function scimakers_addResourceToProject($args) {
 	
 	$status = 'fail';
-	$id = 1;
 	$project_id = $args [0];
 	$resource_id = $args [1];
 	$post_type = 'scimaker_project';
@@ -44,9 +43,7 @@ function scimakers_addResourceToProject($args) {
 		return scimakers_package_rpc ( $out, $status );
 	}
 	$meta = get_post_meta ( $project_id, 'hasResource', false );
-	if (!empty($meta)) {
-	$out['msg2'] = scimaker_list_resourcesForProject( $project_id);
-	}
+	
 	// is this resource already assigned?
 	if (in_array ( $resource_id, $meta )) {
 		$status = true;
