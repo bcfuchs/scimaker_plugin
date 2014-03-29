@@ -167,9 +167,9 @@ class Scimakers_FindResource_Widget extends WP_Widget {
 	function __construct() {
 		parent::__construct(
 				'scimakers_findresource_widget', // Base ID
-				__('Find a Resource', 'text_domain'), // Name
-				array( 'description' => __( 'Find a Resource Widget', 'text_domain' ),
-						'title' => __( 'Find a Resource', 'text_domain' )) // Args
+				__('Add a Resource', 'text_domain'), // Name
+				array( 'description' => __( 'Add a Resource Widget', 'text_domain' ),
+						'title' => __( 'Add a Resource', 'text_domain' )) // Args
 		);
 	}
 
@@ -204,7 +204,7 @@ class Scimakers_FindResource_Widget extends WP_Widget {
 			$title = $instance[ 'title' ];
 		}
 		else {
-			$title = __( 'Find a Resource', 'text_domain' );
+			$title = __( 'Add a Resource', 'text_domain' );
 		}
 		?>
 			<p>

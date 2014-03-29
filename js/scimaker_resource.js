@@ -11,6 +11,7 @@ jQuery(document).ready(function($) {
 					'color' : "green"
 				});
 				$(el).html('<div class="dashicons dashicons-yes"></div>');
+				location.reload();
 			}
 			var onClick = function(el2) {
 				$(el2).css({
@@ -47,15 +48,27 @@ jQuery(document).ready(function($) {
 		$('ul.scimaker_resources_list li').each(function(i,v){
 			var d= new Date();
 			var id = "tester_"+d.getTime()+"_"+i;
-			$(v).prepend('<span id="'+id+'" style="width: 64%;color:white;cursor:pointer;font-weight:lighter;font-size:8pt;"> <div class="dashicons dashicons-plus"></div></span>');
+			
+			
+				
 			var resource_id; 
 			resource_id = $(v).attr('data-scimaker-id');
 			var project_id;
 			project_id =scimaker_addresources.project_id; 
-			console.log('in ul');
-			aRtP('#'+id, {pid:project_id,rid:resource_id});
+			if (scimaker_addresources.resources.indexOf(resource_id) < 0) {
+				$(v).prepend('<span id="'+id+'" style="width: 64%;color:white;cursor:pointer;font-weight:lighter;font-size:8pt;"> <div class="dashicons dashicons-plus"></div></span>');
+				console.log('in ul');
+				aRtP('#'+id, {pid:project_id,rid:resource_id});
+			}
+			else {
+//TODO this should be a minus !
+				$(v).prepend('<span id="'+id+'" style="width: 64%;color:green;cursor:pointer;font-weight:lighter;font-size:8pt;"> <div class="dashicons dashicons-yes"></div></span>');
+			}
+			console.log("project id: "+project_id);
+			console.log(scimaker_addresources.resources);
 			//TODO -- update any lists on page.
 			//TODO an add button should appear only on resources not yet in this project.
+			//TODO need to pass in list of resources in this project
 		});
 		
 		

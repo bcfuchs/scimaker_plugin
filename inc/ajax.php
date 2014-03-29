@@ -15,12 +15,14 @@ function scimaker_addResourceToProject_enqueue($hook) {
 	wp_enqueue_script ( 'scimaker_addresources', plugins_url ( '../js/scimaker_resource.js', __FILE__ ), array (
 			'jquery' 
 	) );
-	$project_id = 105;
-	//$project_id = get_the_ID();
+	
+	$project_id = get_the_ID();
+	$meta = get_post_meta ( $project_id, 'hasResource', false );
 	// in javascript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 	wp_localize_script ( 'scimaker_addresources', 'scimaker_addresources', array (
 			'url' => admin_url ( 'admin-ajax.php' ),
-			'project_id'=>105,
+			'project_id'=>$project_id,
+			'resources'=>$meta,
 			'action' => 'scimaker_addResourceToProject' 
 	) );
 }
