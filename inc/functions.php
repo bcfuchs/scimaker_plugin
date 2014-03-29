@@ -23,6 +23,14 @@ add_shortcode ( 'scimaker_list_challenges', function ($atts) {
 add_shortcode ( 'scimaker_list_resources', function ($atts) {
 	return scimaker_list_shortcode ( $atts, 'Resources', 'scimaker_resources' );
 } );
+add_shortcode ( 'scimaker_list_resources_for_project', function ($atts) {
+	extract( shortcode_atts( array(
+	'project_id' => null,
+
+	), $atts ) );
+	
+		return scimaker_list_resources_for_project($project_id);
+	} );
 
 /**
  * javascript for shortcodes
@@ -30,11 +38,53 @@ add_shortcode ( 'scimaker_list_resources', function ($atts) {
 wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
 wp_enqueue_script ( 'scimaker-plugin', plugins_url ( '../js/scimaker.js', __FILE__ ), array (), '1.0.0', true );
 
+
+function scimaker_list_resources_for_project($id = null) {
+	$title = "Project Resources";
+	$cat_class = "scimaker_resources";
+	
+	$checkPT = function($id,$type) {
+		$post = get_post($id);
+		return	$post->post_type == $type ?  true :  false;
+	
+	};
+	$id ?: get_the_ID();
+	// if on a project page && id not supplied, then use post id
+	if (!$checkPT($id,'scimaker_project')) {
+		return  format_shortcode_list("<b>Not a Project!</b>", $title, $cat_class);
+	}
+	
+	$meta = get_post_meta ( $id, 'hasResource', false );
+	
+	$out = array();
+	$f = function ($v) {
+			return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		};
+	array_push ( $out, "<ul>" );
+	if (!empty($meta)) {
+		
+		foreach($meta as $v) {
+			// get the post title + guid
+			$p = get_post($v);
+			array_push($out,$f($p));
+		}
+		unset($v);
+		
+		
+	}
+	array_push ( $out, "</ul>" );
+	
+	return  format_shortcode_list(join(" ",$out), $title, $cat_class);
+	
+}
+
 // http://code.jquery.com/ui/1.9.2/jquery-ui.min.js
 function scimaker_list_shortcode($atts, $title, $cat) {
 	// TODO attributes
-	// NB we can add a formatter and a filter
-	return format_shortcode_list ( scimaker_list_category_widget ( $cat ), $title, $cat );
+	$format = function ($v) {
+		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+	};
+	return format_shortcode_list ( scimaker_list_category_shortcode ( $cat, $format ), $title, $cat );
 }
 function format_shortcode_list($d, $title, $cat_class) {
 	$out = array ();
@@ -45,14 +95,15 @@ function format_shortcode_list($d, $title, $cat_class) {
 	return join ( " ", $out );
 }
 
+// wrapper for shortcodes
+function scimaker_list_category_shortcode($category_id, $formatter, $filter) {
+	return scimaker_list_category_widget ( $category_id, $formatter, $filter );
+}
 /* widget data + formatting */
 // these are ONLY called by the widgets.
 // strings for readability for now...
-
-
-
 /**
- * Add  basic list html for display in widget
+ * Add basic list html for display in widget
  *
  * @param string $category_id        	
  * @param callable $formatter        	
@@ -68,8 +119,8 @@ function scimaker_list_category_widget($category_id, $formatter = null, $filter 
 	$formatter = is_callable ( $formatter ) ? $formatter : function ($v) {
 		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
 	};
-	
-	$formatter_f = function ($posts_array) use ($formatter) {
+	// wrap in ul
+	$formatter_f = function ($posts_array) use($formatter) {
 		$out = array ();
 		
 		array_push ( $out, "<ul>" );
@@ -80,15 +131,16 @@ function scimaker_list_category_widget($category_id, $formatter = null, $filter 
 		return join ( " ", $out );
 	};
 	
-	return scimaker_list_category_widget_format($category_id,$formatter_f,$filter);
+	return scimaker_list_category_widget_format ( $category_id, $formatter_f, $filter );
 }
 /**
- * Run the list of category posts through any formatter. 
- * 
- * @param unknown $category_id
- * @param callable $formatter
- * @param callable $filter
- * @return boolean|string
+ * Run the list of category posts through any formatter.
+ *
+ *
+ * @param unknown $category_id        	
+ * @param callable $formatter        	
+ * @param callable $filter        	
+ * @return boolean string
  */
 function scimaker_list_category_widget_format($category_id, $formatter = null, $filter = null) {
 	$posts_array = scimaker_list_category ( $category_id );
@@ -98,7 +150,9 @@ function scimaker_list_category_widget_format($category_id, $formatter = null, $
 	// register a default formatter -- takes the posts array as argument
 	$formatter = is_callable ( $formatter ) ? $formatter : $formatter = function ($posts_array) {
 		$out = array ();
-		$f = function($v){return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";};
+		$f = function ($v) {
+			return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		};
 		array_push ( $out, "<ul>" );
 		foreach ( $posts_array as $v ) {
 			array_push ( $out, $f ( $v ) );
@@ -106,8 +160,7 @@ function scimaker_list_category_widget_format($category_id, $formatter = null, $
 		array_push ( $out, "</ul>" );
 		return join ( " ", $out );
 	};
-	return $formatter (array_filter ( $posts_array, $filter ));
-	
+	return $formatter ( array_filter ( $posts_array, $filter ) );
 }
 /**
  *
@@ -134,4 +187,6 @@ function scimaker_list_category($category_id) {
 	
 	return $posts_array;
 }
+
+
 ?>

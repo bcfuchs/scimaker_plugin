@@ -1,31 +1,47 @@
-
 jQuery(document).ready(function($) {
-	// update handler
-	var updater = function(response) {
+					// update handler
+		var aRtP = function(buttonSelector, params) {
+			var el = $(buttonSelector);
+			var updater = function(response) {
+				
+				// here we'd update the display
+				console.log('Got this from the server: '+ response);
+				$(el).css({
+					'background-color' : "green"
+				});
+				$(el).html("Added this resource!");
+			}
+			var onClick = function(el2) {
+				$(el2).css({
+					'background-color' : "blue"
+				});
+				$(el2).html("Adding this resource...");
+			}
+			$(el).click( function() {
+				onClick(el);
+				addResourceToProject(params.pid, params.rid, updater);
+			});
 
-		// here we'd update the display
-		console.log('Got this from the server: ' + response);
-		$('#tester1').css({'background-color':"green"});
-		$('#tester1').html("Added this resource!");
-	}
-// here we'd set a click
-	$('#wp-toolbar ul#wp-admin-bar-top-secondary').append('<li id="tester1" style="width: 64%;background-color:gray;color:white;border:  dotted blue;cursor:pointer;">add to project test</li>');
-	
-	$('#tester1').click(function() {
-		$('#tester1').css({'background-color':"blue"});
-		$('#tester1').html("Adding this resource...");
-		addResourceToProject(105,91,updater);
-	});
-   function addResourceToProject(pid,rid,handler) {
-	var data = {
-		action: ajax_object.action,
-		project_id:pid,
-		resource_id:rid
-	};
-	console.log('off we go addResourceToProject');
+			function addResourceToProject(pid, rid, handler) {
+				// TODO add a token
+				var data = {
+					action : scimaker_addresources.action,
+					project_id : pid,
+					resource_id : rid,
+					wp: '5eb63bbbe01eeed093cb22bb8f5acdc3'
+				};
+				console.log('sent request to '+scimaker_addresources.ajax_url);
+				console.log(scimaker_addresources);
 
-	// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
-	
-	$.post(ajax_object.ajax_url, data, handler);
-   }
-});
+				// since 2.8 ajaxurl is always defined in the admin
+				// header and points to
+				// admin-ajax.php
+
+				$.post(scimaker_addresources.url, data, handler);
+			}
+		} // aRtP
+		
+		$('#wp-toolbar ul#wp-admin-bar-top-secondary')
+				.append('<li id="tester1" style="width: 64%;background-color:gray;color:white;border:  dotted blue;cursor:pointer;">add to project test</li>');
+		aRtP('#tester1', {pid:105,rid:91});
+});	

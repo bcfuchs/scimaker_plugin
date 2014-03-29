@@ -21,6 +21,7 @@ function scimakers_addResourceToProject($args) {
 	$post_type = 'scimaker_project';
 	
 	$out = array ();
+	// check right post type
 	$checkPT = function($id,$type) {
 		$post = get_post($id);
 		return	$post->post_type == $type ?  true :  false;
@@ -35,19 +36,22 @@ function scimakers_addResourceToProject($args) {
 		return scimakers_package_rpc ( $out, $status );
 	}
 	
-	
+	// is project post-type scimaker_resources?
 	if (! $checkPT($resource_id,'scimaker_resources')) { 
 		$status = false;
-		$out['msg'] = '"'. $post->post_title . "\" is not a resource!";
+		$out['msg'] = '"'. $resource_id . " ". $post->post_title . "\" is not a resource!";	
 		$out['args'] = $args;
 		return scimakers_package_rpc ( $out, $status );
 	}
 	$meta = get_post_meta ( $project_id, 'hasResource', false );
-	
+	if (!empty($meta)) {
+	$out['msg2'] = scimaker_list_resourcesForProject( $project_id);
+	}
 	// is this resource already assigned?
 	if (in_array ( $resource_id, $meta )) {
 		$status = true;
 		$out ['msg'] = "resource already belongs to that project--we should never have come this far";
+		
 		delete_post_meta( $project_id,'hasResource',$resource_id);
 		return scimakers_package_rpc ( $out, $status );
 	} 

@@ -5,9 +5,7 @@
 add_action ( 'admin_enqueue_scripts', 'scimaker_addResourceToProject_enqueue' );
 add_action ( 'wp_enqueue_scripts', 'scimaker_addResourceToProject_enqueue' );
 function scimaker_addResourceToProject_enqueue($hook) {
-	?>
-<!-- OMG this is the ABC123 -->
-<?php
+
 	if ('index.php' != $hook) {
 		// Only applies to dashboard panel
 		// return;
@@ -17,15 +15,17 @@ function scimaker_addResourceToProject_enqueue($hook) {
 	) );
 	
 	// in javascript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
-	wp_localize_script ( 'scimaker_addresources', 'ajax_object', array (
-			'ajax_url' => admin_url ( 'admin-ajax.php' ),
+	wp_localize_script ( 'scimaker_addresources', 'scimaker_addresources', array (
+			'url' => admin_url ( 'admin-ajax.php' ),
 			'action' => 'scimaker_addResourceToProject' 
 	) );
 }
 add_action ( 'wp_ajax_scimaker_addResourceToProject', 'scimaker_addResourceToProject_ajax' );
 add_action ( 'wp_ajax_nopriv_scimaker_addResourceToProject', 'scimaker_addResourceToProject_ajax' );
+// TODO token system.
+
 function scimaker_addResourceToProject_ajax() {
-	global $wpdb; // this is how you get access to the database
+//	global $wpdb; // this is how you get access to the database
 	$out = array ();
 	// check if user has required level in all roles-fail if missing in any one. 
 	$checkUser = function ($level) use (&$out) {
