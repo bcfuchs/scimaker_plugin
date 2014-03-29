@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+	console.log('okeydoke');
 					// update handler
 		var aRtP = function(buttonSelector, params) {
 			var el = $(buttonSelector);
@@ -7,15 +8,15 @@ jQuery(document).ready(function($) {
 				// here we'd update the display
 				console.log('Got this from the server: '+ response);
 				$(el).css({
-					'background-color' : "green"
+					'color' : "green"
 				});
-				$(el).html("Added this resource!");
+				$(el).html('<div class="dashicons dashicons-yes"></div>');
 			}
 			var onClick = function(el2) {
 				$(el2).css({
-					'background-color' : "blue"
+					'color' : "aqua"
 				});
-				$(el2).html("Adding this resource...");
+				$(el2).html('<div class="dashicons dashicons-update"></div>');
 			}
 			$(el).click( function() {
 				onClick(el);
@@ -41,7 +42,21 @@ jQuery(document).ready(function($) {
 			}
 		} // aRtP
 		
-		$('#wp-toolbar ul#wp-admin-bar-top-secondary')
-				.append('<li id="tester1" style="width: 64%;background-color:gray;color:white;border:  dotted blue;cursor:pointer;">add to project test</li>');
-		aRtP('#tester1', {pid:105,rid:91});
+//		$('#wp-toolbar ul#wp-admin-bar-top-secondary')
+//				.append('<li id="tester1" style="width: 64%;color:white;cursor:pointer;">add to project test</li>');
+		$('ul.scimaker_resources_list li').each(function(i,v){
+			var d= new Date();
+			var id = "tester_"+d.getTime()+"_"+i;
+			$(v).prepend('<span id="'+id+'" style="width: 64%;color:white;cursor:pointer;font-weight:lighter;font-size:8pt;"> <div class="dashicons dashicons-plus"></div></span>');
+			var resource_id; 
+			resource_id = $(v).attr('data-scimaker-id');
+			var project_id;
+			project_id =scimaker_addresources.project_id; 
+			console.log('in ul');
+			aRtP('#'+id, {pid:project_id,rid:resource_id});
+			//TODO -- update any lists on page.
+			//TODO an add button should appear only on resources not yet in this project.
+		});
+		
+		
 });	

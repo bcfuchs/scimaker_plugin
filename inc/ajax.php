@@ -1,3 +1,4 @@
+
 <?php
 
 // http://codex.wordpress.org/AJAX_in_Plugins
@@ -5,18 +6,21 @@
 add_action ( 'admin_enqueue_scripts', 'scimaker_addResourceToProject_enqueue' );
 add_action ( 'wp_enqueue_scripts', 'scimaker_addResourceToProject_enqueue' );
 function scimaker_addResourceToProject_enqueue($hook) {
-
-	if ('index.php' != $hook) {
-		// Only applies to dashboard panel
-		// return;
-	}
+	$checkPT = function ($id, $type) {
+		$post = get_post ( $id );
+		return $post->post_type == $type ? true : false;
+	};
+	//only load when a project
+	
 	wp_enqueue_script ( 'scimaker_addresources', plugins_url ( '../js/scimaker_resource.js', __FILE__ ), array (
 			'jquery' 
 	) );
-	
+	$project_id = 105;
+	//$project_id = get_the_ID();
 	// in javascript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
 	wp_localize_script ( 'scimaker_addresources', 'scimaker_addresources', array (
 			'url' => admin_url ( 'admin-ajax.php' ),
+			'project_id'=>105,
 			'action' => 'scimaker_addResourceToProject' 
 	) );
 }

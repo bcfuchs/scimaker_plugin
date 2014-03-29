@@ -38,7 +38,13 @@ add_shortcode ( 'scimaker_list_resources_for_project', function ($atts) {
 wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
 wp_enqueue_script ( 'scimaker-plugin', plugins_url ( '../js/scimaker.js', __FILE__ ), array (), '1.0.0', true );
 // Actually this could be jsut a filter + new formatter on 
-function scimaker_list_resources_for_project($id = null, $raw = false) {
+/**
+ * 
+ * @param int $id
+ * @param boolean $raw
+ * @return boolean|string
+ */
+function scimaker_list_resources_for_project($id = null,  $raw = false) {
 	$title = "Project Resources";
 	$cat_class = "scimaker_resources";
 	$prop = array();
@@ -89,7 +95,8 @@ function scimaker_list_resources_for_project($id = null, $raw = false) {
 function scimaker_list_shortcode($atts, $title, $cat) {
 	// TODO attributes
 	$format = function ($v) {
-		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		return '<li data-scimaker-id="'.$v->ID.'"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		
 	};
 	return format_shortcode_list ( scimaker_list_category_shortcode ( $cat, $format ), $title, $cat );
 }
@@ -124,13 +131,13 @@ function scimaker_list_category_widget($category_id, $formatter = null, $filter 
 	
 	// default formatter..
 	$formatter = is_callable ( $formatter ) ? $formatter : function ($v) {
-		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		return '<li data-scimaker-id="'.$v->ID.'"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
 	};
 	// wrap in ul
-	$formatter_f = function ($posts_array) use($formatter) {
+	$formatter_f = function ($posts_array) use($formatter,$category_id) {
 		$out = array ();
 		
-		array_push ( $out, "<ul>" );
+		array_push ( $out, "<ul class=\"".$category_id."_list\">" );
 		foreach ( $posts_array as $v ) {
 			array_push ( $out, $formatter ( $v ) );
 		}
