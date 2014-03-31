@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 					'color' : "green"
 				});
 				$(el).html('<div class="dashicons dashicons-yes"></div>');
-				location.reload();
+				//location.reload();
 			}
 			var onClick = function(el2) {
 				$(el2).css({
@@ -55,9 +55,10 @@ jQuery(document).ready(function($) {
 			resource_id = $(v).attr('data-scimaker-id');
 			var project_id;
 			project_id =scimaker_addresources.project_id; 
+		
 			if (scimaker_addresources.resources.indexOf(resource_id) < 0) {
 				$(v).prepend('<span id="'+id+'" style="width: 64%;color:white;cursor:pointer;font-weight:lighter;font-size:8pt;"> <div class="dashicons dashicons-plus"></div></span>');
-				console.log('in ul');
+				console.log('in ul '+project_id+' '+resource_id);
 				aRtP('#'+id, {pid:project_id,rid:resource_id});
 			}
 			else {

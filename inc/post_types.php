@@ -17,8 +17,9 @@ function add_post_types_scimaker() {
 	$apt('scimaker_resources','Resources','Resource',26);
 	$apt('scimaker_event','Events','Event',27);
 	$apt('scimaker_challenge','Challenges','Challenge',28);
-	$apt('scimaker_club','Clubs','Club',29);
-	$apt('scimaker_forum','Groups','Group',30);
+	$apt('scimaker_team','Teams','Team',29);
+	$apt('scimaker_club','Clubs','Club',30);
+	$apt('scimaker_forum','Groups','Group',31);
 	add_action( 'pre_get_posts', add_scimaker_post_types_to_query($post_types));
 }
 
