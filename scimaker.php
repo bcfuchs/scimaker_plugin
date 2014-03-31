@@ -12,6 +12,7 @@ License URI: http://www.gnu.org/licenses/gpl.html
 
 include plugin_dir_path(__FILE__).'inc/functions.php';
 include plugin_dir_path(__FILE__).'inc/widgets.php';
+include plugin_dir_path(__FILE__).'inc/dashboard_widgets.php';
 include plugin_dir_path(__FILE__).'inc/xmlrpc.php';
 include plugin_dir_path(__FILE__).'inc/post_types.php';
 include plugin_dir_path(__FILE__).'inc/meta.php';
