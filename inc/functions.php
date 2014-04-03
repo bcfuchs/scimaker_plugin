@@ -32,51 +32,57 @@ add_shortcode ( 'scimaker_list_resources_for_project', function ($atts) {
 	return scimaker_list_resources_for_project ( $project_id, $raw );
 } );
 
-add_shortcode('scimaker_join_team_button', function($atts){
-	$tid = get_the_ID();
-	?>
+add_shortcode ( 'scimaker_join_team_button', function ($atts) {
+	$tid = get_the_ID ();
+	$uid = get_current_user_ID ();
+	$verb = 'hasMember';
+	$meta = get_post_meta ( $tid, $verb, false );
+	if (in_array ( $uid, $meta )) {
+		?>
+		<div class="scimaker_jointeam_yes"><div class="dashicons dashicons-yes"></div>You're on this team</div>
 	
-	<button data-scimaker-team-id="<?php echo $tid;?>" class="scimaker_join_team_button">Join this team</button> 
-	<?php 
-	
-	
-	
-});
+	<?php
+	} else {
+		?>
+<button data-scimaker-team-id="<?php echo $tid;?>" class="scimaker_join_team_button">Join this team</button>
+<?php
+	}
+} );
 
 /**
  * javascript for shortcodes
  */
 wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
 wp_enqueue_script ( 'scimaker-plugin', plugins_url ( '../js/scimaker.js', __FILE__ ), array (), '1.0.0', true );
-// Actually this could be jsut a filter + new formatter on 
+// Actually this could be jsut a filter + new formatter on
 /**
- * 
- * @param int $id
- * @param boolean $raw
- * @return boolean|string
+ *
+ * @param int $id        	
+ * @param boolean $raw        	
+ * @return boolean string
  */
-function scimaker_list_resources_for_project($id = null,  $raw = false) {
+function scimaker_list_resources_for_project($id = null, $raw = false) {
 	$title = "Project Resources";
 	$cat_class = "scimaker_resources";
-	$prop = array();
-	$prop['notproject'] =  "<b>Not a Project!</b>"; 
+	$prop = array ();
+	$prop ['notproject'] = "<b>Not a Project!</b>";
 	$checkPT = function ($id, $type) {
 		$post = get_post ( $id );
 		return $post->post_type == $type ? true : false;
 	};
-
+	
 	// if on a project page && id not supplied, then use post id
 	
-	$id = $id ?: get_the_ID();
+	$id = $id ?  : get_the_ID ();
 	
 	if (! $checkPT ( $id, 'scimaker_project' )) {
-		return format_shortcode_list ($prop['notproject'], $title, $cat_class );
+		return format_shortcode_list ( $prop ['notproject'], $title, $cat_class );
 	}
 	// list of resource ids assoc. with project $id
 	$meta = get_post_meta ( $id, 'hasResource', false );
 	
 	$out = array (); // the output
-	// list item formatter
+	                 // list item formatter
 	$f = function ($v) {
 		return '<li><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
 	};
@@ -95,10 +101,9 @@ function scimaker_list_resources_for_project($id = null,  $raw = false) {
 		array_push ( $out, "</ul>" );
 	};
 	if ($raw == true) {
-		
 	} else {
 		$f_big ( $meta, $f );
-		return format_shortcode_list ( join(" ",$out), $title, $cat_class );
+		return format_shortcode_list ( join ( " ", $out ), $title, $cat_class );
 	}
 }
 
@@ -106,8 +111,7 @@ function scimaker_list_resources_for_project($id = null,  $raw = false) {
 function scimaker_list_shortcode($atts, $title, $cat) {
 	// TODO attributes
 	$format = function ($v) {
-		return '<li data-scimaker-id="'.$v->ID.'"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
-		
+		return '<li data-scimaker-id="' . $v->ID . '"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
 	};
 	return format_shortcode_list ( scimaker_list_category_shortcode ( $cat, $format ), $title, $cat );
 }
@@ -142,13 +146,13 @@ function scimaker_list_category_widget($category_id, $formatter = null, $filter 
 	
 	// default formatter..
 	$formatter = is_callable ( $formatter ) ? $formatter : function ($v) {
-		return '<li data-scimaker-id="'.$v->ID.'"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
+		return '<li data-scimaker-id="' . $v->ID . '"><a href="' . $v->guid . '">' . $v->post_title . "</a></li>";
 	};
 	// wrap in ul
-	$formatter_f = function ($posts_array) use($formatter,$category_id) {
+	$formatter_f = function ($posts_array) use($formatter, $category_id) {
 		$out = array ();
 		
-		array_push ( $out, "<ul class=\"".$category_id."_list\">" );
+		array_push ( $out, "<ul class=\"" . $category_id . "_list\">" );
 		foreach ( $posts_array as $v ) {
 			array_push ( $out, $formatter ( $v ) );
 		}
