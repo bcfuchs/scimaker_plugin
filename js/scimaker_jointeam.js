@@ -1,9 +1,8 @@
-
 jQuery(document).ready(function($) {
 
 	// update handler
-	var jointeam_f = function(buttonSelector, params) {
-		var el = $(buttonSelector);
+	var jointeam_f = function(el, params) {
+
 		var updater = function(response) {
 
 			// here we'd update the display
@@ -42,16 +41,20 @@ jQuery(document).ready(function($) {
 			$.post(scimaker_jointeam.url, data, handler);
 		}
 	} // jointeam_f
-	var team_id = scimaker_jointeam.team_id; // for testing purposes
 
 	var id = 'jointeambutton';
 	console.log('join team');
 	console.log(scimaker_jointeam);
+	// add this to every button with this class.
+	$('.scimaker_join_team_button').each(function(i, v) {
+		var team_id = null;
+		team_id = $(v).attr('data-scimaker-team-id');
+		if (team_id != null) {
+			jointeam_f($(v), {
+				teamid : team_id
+			});
+		}
 
-	var button = '<button id="'+id+'">join team</button>';
-	$('#wpadminbar').append(button);
-	jointeam_f('#' + id, {
-		teamid : team_id
 	});
 
 });

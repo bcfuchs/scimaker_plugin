@@ -1,20 +1,27 @@
-<?php 
-
-
+<?php
+/**
+ * 
+ * @param array $args  // team_id and user_id
+ */
 function scimakers_joinTeam($args) {
 	$team_id = $args [0];
 	$user_id = $args [1];
 	$verb = 'hasMember';
 	$post_type = 'scimaker_team';
 	// $post_type = 'scimaker_project';
-	//TODO tests should go in as callbacks here.
-	$out = scimakers_addRelation_user($post_type,'',$team_id,$verb,$user_id);
-	$out ['msg'] = "added you (".$user_id .") to " . get_post_field('post_title',$team_id);
-	$out ['args'] = $args;
-	$out ['res'] = get_post_meta ( $team_id, 'hasMember', false );
+	// TODO tests should go in as callbacks here.
+	$out = scimakers_addRelation_user ( $post_type, '', $team_id, $verb, $user_id );
+	// out['status'] true -- success
+	if ($out ['status'] == true) {
+		
+		$out ['msg'] = "added you (" . $user_id . ") to " . get_post_field ( 'post_title', $team_id );
+		$out ['args'] = $args;
+		$out ['res'] = get_post_meta ( $team_id, 'hasMember', false );
+	}
+	return scimakers_package_rpc ( $out, $out ['status'] );
+
 	
 	
-	return scimakers_package_rpc ( $out, $status );
 }
 /**
  * Creates a scimaker metadata relation project hasResource $resource_id
@@ -122,10 +129,10 @@ function scimakers_addRelation_user($subject_post_type,$object_post_type,$subjec
 	$out['args2'] = array($subject_post_type,$object_post_type,$subject,$verb,$object);
 
 	if (! $checkPT($subject,$subject_post_type)) {
-		$status = false;
-
+		
+		$out['status'] = false;
 		$out['err'] = 'no subject ' . $subject_post_type .' for ' . $subject;
-		return scimakers_package_rpc ( $out, $status );
+		return $out;
 	}
 
 	
@@ -133,11 +140,11 @@ function scimakers_addRelation_user($subject_post_type,$object_post_type,$subjec
 	$out ['msgmeta'] .= print_r($meta,true);
 	// is this subject already assigned?
 	if (in_array ( $object, $meta )) {
-		$status = false;
-		$out ['msg'] = "relationship exists!!";
 		
+		$out['status'] = false;
+		$out ['msg'] = "relationship exists!!";
 		delete_post_meta( $subject,$verb,$object);
-		return scimakers_package_rpc ( $out, $status );
+		return $out;
 
 	}
 
@@ -145,7 +152,7 @@ function scimakers_addRelation_user($subject_post_type,$object_post_type,$subjec
 
 	// for the moment, do this w/o ref. to user.
 	$res = add_metadata ( 'post', $subject, $verb,$object, false );
-	$out['status'] = $status;
+	$out['status'] = true;
 	$out['msg2']  = print_r(array($subject, $verb,$object),true);
 	return $out;
 

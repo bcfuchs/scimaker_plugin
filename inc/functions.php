@@ -32,6 +32,17 @@ add_shortcode ( 'scimaker_list_resources_for_project', function ($atts) {
 	return scimaker_list_resources_for_project ( $project_id, $raw );
 } );
 
+add_shortcode('scimaker_join_team_button', function($atts){
+	$tid = get_the_ID();
+	?>
+	
+	<button data-scimaker-team-id="<?php echo $tid;?>" class="scimaker_join_team_button">Join this team</button> 
+	<?php 
+	
+	
+	
+});
+
 /**
  * javascript for shortcodes
  */
