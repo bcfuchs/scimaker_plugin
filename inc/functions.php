@@ -52,7 +52,7 @@ add_shortcode ( 'scimaker_join_team_button', function ($atts) {
 /**
  * javascript for shortcodes
  */
-wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
+//wp_enqueue_script ( 'jquery-ui', '//code.jquery.com/ui/1.9.2/jquery-ui.min.js', array (), '1.9.2', true );
 wp_enqueue_script ( 'scimaker-plugin', plugins_url ( '../js/scimaker.js', __FILE__ ), array (), '1.0.0', true );
 // Actually this could be jsut a filter + new formatter on
 /**
