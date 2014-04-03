@@ -100,16 +100,19 @@ function scimakers_my_widget_user($cat,$slug,$rel = null) {
 	$user = wp_get_current_user ();
 	$uid = $user->ID;
 	
-	// get all teams;
+	$test1 = get_post_meta(225,'hasMember',false);
 	$posts = get_posts(array('post_type'=>$cat));
 	// get metadata for each team. 
 	$myPosts = array();
+	$col = array();
 	foreach ($posts as $p) {
-		$meta = get_post_meta($p->ID,$rel,false);	
+		$meta = get_post_meta($p->ID,$rel,false);
+		array_push($col,array('meta'=>$meta,'pid'=>$p->ID,'rel'=>$rel));	
 	    if (in_array($uid,$meta)){
-			
+		array_push($myPosts,$p);	
 		}
-		array_push($myPosts,$p);
+		
+		
 	}
 	unset($p);
 		$formatter = function ($v) {
@@ -121,16 +124,28 @@ function scimakers_my_widget_user($cat,$slug,$rel = null) {
 	};
 	$sluginfoId = $slug . "_info";
 
-	echo '<div class="sm_widget_info" style="display:none"> post-type: '.$cat.'</div>';
+	echo '<div class="sm_widget_info" style="display:none"> post-type: '
+		.$cat
+		.' <br/> user: '
+		.$uid
+		.'<br/> posts: '
+		. count($myPosts)
+		.'<br/>'
+ 		. print_r($col,true)
+ 		.'<br/>'	
+ 		. $rel
+ 		.'<br/>'
+ 		. print_r($test1,true)
+		.'</div>';
 	?>
 	
 	<ul>
 		<?php
 	foreach ( $myPosts as $p ) {	
 	
-		if ($p->post_author == $uid) {
+		
 			echo $formatter ( $p );
-		}	
+			
 	}
 	unset ( $p );
 	?>

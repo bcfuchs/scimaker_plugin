@@ -121,14 +121,15 @@ function scimaker_joinTeam_ajax() {
 
 	$args = array ();
 	$team_id = intval ( $_POST ['team_id'] );
-	$user = get_current_user();
-	$user_id = $user->ID;
+	$user_id = get_current_user_id();
+	
 	array_push ( $args, $team_id );
 	array_push ( $args, $user_id );
 	
 	// in ?
 	$out = scimakers_joinTeam ( $args );
 	$out['param2'] = $args;
+	
 	echo json_encode ( $out );
 
 	die (); // this is required to return a proper result
