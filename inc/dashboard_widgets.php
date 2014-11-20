@@ -45,12 +45,12 @@ function remove_dashboard_widgets () {
 	//Completely remove various dashboard widgets (remember they can also be HIDDEN from admin)
 	remove_meta_box( 'dashboard_quick_press',   'dashboard', 'side' );      //Quick Press widget
 	remove_meta_box( 'dashboard_recent_drafts', 'dashboard', 'side' );      //Recent Drafts
-	remove_meta_box( 'dashboard_primary',       'dashboard', 'm' );      //WordPress.com Blog
-	remove_meta_box( 'dashboard_activity',      'dashboard', 'side' );      //activity
+	remove_meta_box( 'dashboard_primary',       'dashboard', 'side' );      //WordPress.com Blog
+	remove_meta_box( 'dashboard_activity',      'dashboard', 'normal' );      //activity
 	// dashboard_right_now
 	//
 //	remove_meta_box( 'welcome-panel',      'dashboard', 'side' );      //activity
-	remove_meta_box( 'dashboard_right_now',      'dashboard', 'side' );      //at a glance
+	remove_meta_box( 'dashboard_right_now',      'dashboard', 'normal' );      //at a glance
 	remove_meta_box( 'dashboard_secondary',     'dashboard', 'side' );      //Other WordPress News
 	remove_meta_box( 'dashboard_incoming_links','dashboard', 'normal' );    //Incoming Links
 	remove_meta_box( 'dashboard_plugins',       'dashboard', 'normal' );    //Plugins
@@ -58,6 +58,7 @@ function remove_dashboard_widgets () {
 }
 
 add_action('wp_dashboard_setup', 'remove_dashboard_widgets');
+
 /**
  * Scimaker widget creator
  * this is the display callback
@@ -147,19 +148,7 @@ function scimakers_my_widget_user($cat,$slug,$rel = null) {
 		return '<li data-scimaker-id="' . $v->ID . '">Oops! ' . $v->post_title . ' ' . $pa . " " . $uid . "</li>";
 	};
 	$sluginfoId = $slug . "_info";
-	global $wp_meta_boxes;
-	$gmb = function ( $screen = null, $context = 'advanced' ) use ( $wp_meta_boxes ) {
-		
-	
-		if ( empty( $screen ) )
-			$screen = get_current_screen();
-		elseif ( is_string( $screen ) )
-		$screen = convert_to_screen( $screen );
-	
-		$page = $screen->id;
-	
-		return $wp_meta_boxes[$page][$context];
-	};
+// debug info
 	echo '<div class="sm_widget_info" style="display:none"> post-type: '
 		.$cat
 		.' <br/> user: '
@@ -171,14 +160,13 @@ function scimakers_my_widget_user($cat,$slug,$rel = null) {
  		.'<br/>'	
  		. $rel
  		.'<br/>'
- 		. print_r($wp_meta_boxes,true)
+
 		.'</div>';
 	?>
 	
 	<ul>
 		<?php
 	foreach ( $myPosts as $p ) {	
-	
 		
 			echo $formatter ( $p );
 			
